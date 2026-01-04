@@ -613,15 +613,20 @@ agar proses saling mengenal berjalan dalam batas kebaikan dan keberkahan.
         </p>
 
       </form>
-       <script>
+        <script>
   document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
-    e.preventDefault(); // Ini yang penting: cegah reload halaman!
+    e.preventDefault(); // cegah reload
 
-    // Ambil data form
     const formData = new FormData(this);
+    
+    // GANTI DENGAN ENDPOINT FORMSPREE LO SENDIRI !!
+    const backendURL = 'https://formspree.io/f/mbdlprpk'; // <-- ubah ini!!
 
-    // Ganti URL ini dengan endpoint backend lo (contoh: Formspree, Google Apps Script, dll)
-    const backendURL = 'https://formspree.io/f/your-form-id'; // contoh Formspree
+    // Tambahin loading biar user tau lagi kirim
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Kirim...';
 
     try {
       const response = await fetch(backendURL, {
@@ -633,15 +638,20 @@ agar proses saling mengenal berjalan dalam batas kebaikan dan keberkahan.
       });
 
       if (response.ok) {
-        // Tampilkan pesan sukses
         document.getElementById('rsvpStatus').classList.remove('d-none');
-        document.getElementById('rsvpStatus').textContent = 'Terima kasih, Terkirim 🙏';
+        document.getElementById('rsvpStatus').textContent = 'Terima kasih! Konfirmasi kehadiran Anda telah terkirim 🙏';
+        document.getElementById('rsvpStatus').classList.add('text-success');
         this.reset(); // kosongin form
       } else {
-        alert('Gagal kirim, coba lagi ya!');
+        throw new Error('Gagal kirim');
       }
     } catch (error) {
-      alert('Error: ' + error.message);
+      alert('Maaf, gagal mengirim. Coba lagi atau hubungi kami langsung ya 😊');
+      console.error(error);
+    } finally {
+      // balikin tombol
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
     }
   });
 </script>
