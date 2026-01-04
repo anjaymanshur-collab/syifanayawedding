@@ -544,117 +544,292 @@ agar proses saling mengenal berjalan dalam batas kebaikan dan keberkahan.
   <section class="bg-light-dark pt-2 pb-4" id="rsvp">
   <div class="container text-center">
     <!-- RSVP -->
-    <div class="bg-theme-auto mt-4 p-4 shadow rounded-4 text-start"
-         data-aos="fade-up"
-         data-aos-duration="2000">
+<div class="bg-theme-auto mt-4 p-4 shadow rounded-4 text-start"
+     data-aos="fade-up"
+     data-aos-duration="2000">
 
-      <h3 class="text-center mb-3 font-esthetic" style="font-size: 1.75rem;">
-        Konfirmasi Kehadiran
-      </h3>
+  <h3 class="text-center mb-3 font-esthetic" style="font-size: 1.75rem;">
+    Konfirmasi Kehadiran
+  </h3>
 
-      <form id="rsvpForm">
+  <form id="rsvpForm">
+    <div class="mb-3">
+      <label class="form-label"><i class="fa-solid fa-person me-2"></i>Nama</label>
+      <input type="text" class="form-control rounded-4 shadow-sm" name="nama" placeholder="Nama Anda" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label"><i class="fa-solid fa-users me-2"></i>Jumlah Tamu</label>
+      <input type="number" class="form-control rounded-4 shadow-sm" name="jumlah" min="1" max="5" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label"><i class="fa-solid fa-circle-check me-2"></i>Kehadiran</label>
+      <div class="d-flex gap-4 ps-1">
+        <label><input type="radio" name="kehadiran" value="Hadir" required> Hadir</label>
+        <label><input type="radio" name="kehadiran" value="Tidak Hadir"> Tidak Hadir</label>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label"><i class="fa-solid fa-comment me-2"></i>Ucapan</label>
+      <textarea class="form-control rounded-4 shadow-sm" name="ucapan" rows="3" placeholder="Ucapan singkat (opsional)"></textarea>
+    </div>
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary rounded-4 shadow-sm">
+        <i class="fa-solid fa-paper-plane me-2"></i>Kirim
+      </button>
+    </div>
+    <p id="rsvpStatus" class="text-center mt-3 d-none text-success fw-medium">
+      Terima kasih! Konfirmasi kehadiran Anda telah terkirim 🙏
+    </p>
+  </form>
 
-        <!-- Nama -->
-        <div class="mb-3">
-          <label class="form-label">
-            <i class="fa-solid fa-person me-2"></i>Nama
-          </label>
-          <input type="text" class="form-control rounded-4 shadow-sm"
-                 name="nama" placeholder="Nama Anda" required>
-        </div>
+  <!-- CSS -->
+  <style>
+    .bg-light { background-color: rgb(0, 52, 129) !important; }
+    .text-muted, small { color: rgb(255, 255, 255) !important; font-size: .875em; }
+    .ucapan-card h5, .ucapan-card p { color: rgb(255, 255, 255) !important; }
+    .ucapan-card p.fst-italic { color: rgba(255, 255, 255, 0.95) !important; }
+    .text-success { color: #4ade80 !important; }
+    .text-warning { color: #fbbf24 !important; }
+    #ucapanList h3, #loadingUcapan, #noUcapan, #totalHadir { color: #ffffff !important; }
 
-        <!-- Jumlah -->
-        <div class="mb-3">
-          <label class="form-label">
-            <i class="fa-solid fa-users me-2"></i>Jumlah Tamu
-          </label>
-          <input type="number" class="form-control rounded-4 shadow-sm"
-                 name="jumlah" min="1" max="5" required>
-        </div>
+    #ucapanGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 576px) {
+      #ucapanGrid { grid-template-columns: 1fr; }
+    }
 
-        <!-- Kehadiran (RADIO) -->
-        <div class="mb-3">
-          <label class="form-label">
-            <i class="fa-solid fa-circle-check me-2"></i>Kehadiran
-          </label>
-          <div class="d-flex gap-4 ps-1">
-            <label>
-              <input type="radio" name="kehadiran" value="Hadir" required>
-              Hadir
-            </label>
-            <label>
-              <input type="radio" name="kehadiran" value="Tidak Hadir">
-              Tidak Hadir
-            </label>
-          </div>
-        </div>
+    .pagination-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 2rem;
+    }
+    .page-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-btn:hover:not(:disabled) { background: rgba(255,255,255,0.3); }
 
-        <!-- Ucapan -->
-        <div class="mb-3">
-          <label class="form-label">
-            <i class="fa-solid fa-comment me-2"></i>Ucapan
-          </label>
-          <textarea class="form-control rounded-4 shadow-sm"
-                    name="ucapan" rows="3"
-                    placeholder="Ucapan singkat (opsional)"></textarea>
-        </div>
+    .page-dots { display: flex; gap: 8px; }
+    .dot {
+      width: 10px; height: 10px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+    }
+    .dot.active { background: white; transform: scale(1.3); }
 
-        <!-- Button -->
-        <div class="d-grid">
-          <button type="submit"
-                  class="btn btn-primary rounded-4 shadow-sm">
-            <i class="fa-solid fa-paper-plane me-2"></i>Kirim
-          </button>
-        </div>
+    #totalHadir {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+    }
+  </style>
 
-        <p id="rsvpStatus"
-           class="text-center mt-3 d-none">
-          Terima kasih, Terkirim 🙏
-        </p>
+  <!-- Daftar Ucapan -->
+  <div class="mt-5" id="ucapanList">
+    <h3 class="text-center mb-4 font-esthetic" style="font-size: 1.75rem;">
+      Ucapan & Doa
+    </h3>
 
-      </form>
-        <script>
-  document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
-    e.preventDefault(); // cegah reload
+    <div class="text-center mb-4" id="loadingUcapan">
+      <i class="fa-solid fa-spinner fa-spin me-2"></i> Memuat ucapan...
+    </div>
 
-    const formData = new FormData(this);
-    
-    // GANTI DENGAN ENDPOINT FORMSPREE LO SENDIRI !!
-    const backendURL = 'https://formspree.io/f/mbdlprpk'; // <-- ubah ini!!
+    <div id="ucapanGrid" class="d-none"></div>
 
-    // Tambahin loading biar user tau lagi kirim
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Kirim...';
+    <!-- Pagination + Total Hadir -->
+    <div class="pagination-controls d-none" id="paginationControls">
+      <button class="page-btn" id="prevPage"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="page-dots" id="pageDots"></div>
+      <button class="page-btn" id="nextPage"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
 
-    try {
-      const response = await fetch(backendURL, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
+    <!-- Total Tamu Hadir -->
+    <div class="text-center" id="totalHadir" style="display:none;">
+      Sudah ada <span id="jumlahHadir">0</span> tamu yang akan hadir 🎉
+    </div>
+
+    <div class="text-center mt-4 small opacity-75" id="noUcapan">
+      Belum ada ucapan. Jadilah yang pertama! 💕
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    const SHEETDB_URL = 'https://sheetdb.io/api/v1/tcrlaifv4534l';
+    let allUcapan = [];
+    let currentPage = 0;
+    const itemsPerPage = 4;
+
+    async function loadUcapan() {
+      try {
+        const response = await fetch(SHEETDB_URL);
+        const data = await response.json();
+
+        document.getElementById('loadingUcapan').style.display = 'none';
+
+        if (data.length === 0) {
+          document.getElementById('noUcapan').style.display = 'block';
+          return;
+        }
+
+        // Urutkan terbaru dulu
+        allUcapan = data.reverse();
+
+        // Hitung total tamu yang Hadir
+        let totalHadir = 0;
+        allUcapan.forEach(item => {
+          if (item.Kehadiran === 'Hadir' && item.Jumlah) {
+            totalHadir += parseInt(item.Jumlah);
+          }
+        });
+
+        document.getElementById('jumlahHadir').textContent = totalHadir;
+        if (totalHadir > 0) {
+          document.getElementById('totalHadir').style.display = 'block';
+        }
+
+        renderPage();
+        setupPagination();
+
+      } catch (error) {
+        document.getElementById('loadingUcapan').innerHTML = '<span class="text-danger">Gagal memuat ucapan 😔</span>';
+        console.error(error);
+      }
+    }
+
+    function renderPage() {
+      const grid = document.getElementById('ucapanGrid');
+      grid.innerHTML = '';
+      grid.classList.remove('d-none');
+
+      const start = currentPage * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageItems = allUcapan.slice(start, end);
+
+      pageItems.forEach(item => {
+        if (item.Nama) {
+          const card = document.createElement('div');
+          card.innerHTML = `
+            <div class="card shadow-sm rounded-4 border-0 p-4 bg-light h-100">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <h5 class="mb-0 fw-semibold">${escapeHtml(item.Nama)}</h5>
+                <small class="text-muted text-end">
+                  <i class="fa-solid fa-users me-1"></i> ${item.Jumlah || 1} orang<br>
+                  <strong class="${item.Kehadiran === 'Hadir' ? 'text-success' : 'text-warning'}">
+                    ${item.Kehadiran || '-'}
+                  </strong>
+                </small>
+              </div>
+              ${item.Ucapan ? `<p class="mb-3 fst-italic">"${escapeHtml(item.Ucapan)}"</p>` : ''}
+              <small class="text-muted opacity-75">
+                ${item.Timestamp ? new Date(item.Timestamp).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : ''}
+              </small>
+            </div>
+          `;
+          grid.appendChild(card);
         }
       });
 
-      if (response.ok) {
-        document.getElementById('rsvpStatus').classList.remove('d-none');
-        document.getElementById('rsvpStatus').textContent = 'Terima kasih! Konfirmasi kehadiran Anda telah terkirim 🙏';
-        document.getElementById('rsvpStatus').classList.add('text-success');
-        this.reset(); // kosongin form
-      } else {
-        throw new Error('Gagal kirim');
-      }
-    } catch (error) {
-      alert('Maaf, gagal mengirim. Coba lagi atau hubungi kami langsung ya 😊');
-      console.error(error);
-    } finally {
-      // balikin tombol
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === currentPage));
     }
-  });
-</script>
+
+    function setupPagination() {
+      const totalPages = Math.ceil(allUcapan.length / itemsPerPage);
+      const dotsContainer = document.getElementById('pageDots');
+      const pagination = document.getElementById('paginationControls');
+
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < totalPages; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === 0) dot.classList.add('active');
+        dotsContainer.appendChild(dot);
+      }
+
+      if (totalPages > 1) {
+        pagination.classList.remove('d-none');
+      } else {
+        pagination.classList.add('d-none');
+      }
+
+      updateButtons();
+    }
+
+    function updateButtons() {
+      const totalPages = Math.ceil(allUcapan.length / itemsPerPage);
+      document.getElementById('prevPage').disabled = currentPage === 0;
+      document.getElementById('nextPage').disabled = currentPage === totalPages - 1;
+    }
+
+    document.getElementById('prevPage').addEventListener('click', () => {
+      if (currentPage > 0) { currentPage--; renderPage(); updateButtons(); }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+      const totalPages = Math.ceil(allUcapan.length / itemsPerPage);
+      if (currentPage < totalPages - 1) { currentPage++; renderPage(); updateButtons(); }
+    });
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Submit Form
+    document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
+
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbzrjMBUU_HsLZ72LWYwVmdBlm_r_Y7DPm_9ODk8lCPvPyJTCZZDQCu66JA-eFhf5GElwA/exec';
+
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Kirim...';
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        });
+
+        if (response.ok) {
+          document.getElementById('rsvpStatus').classList.remove('d-none');
+          this.reset();
+          loadUcapan(); // reload semua: ucapan + total hadir
+          currentPage = 0;
+        }
+      } catch (error) {
+        alert('Maaf, gagal mengirim. Coba lagi ya 😊');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+
+    // Load pertama kali
+    loadUcapan();
+  </script>
+
+</div>
+
     </div>
 
   </div>
