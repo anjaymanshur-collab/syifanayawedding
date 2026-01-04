@@ -613,6 +613,50 @@ agar proses saling mengenal berjalan dalam batas kebaikan dan keberkahan.
         </p>
 
       </form>
+        <script>
+const API_URL = "https://script.google.com/macros/s/AKfycbw5R4G0YdAy0H6TSDz00ZLUgUAyXmEMRH90GFqpIucp9ltQUMZ4N19drgsKnrWzT74omA/exec";
+
+const form = document.getElementById("rsvpForm");
+const status = document.getElementById("rsvpStatus");
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault(); // 🔑 cegah reload page
+
+  const nama = form.nama.value.trim();
+  const jumlah = form.jumlah.value.trim();
+  const kehadiran = form.kehadiran.value;
+  const ucapan = form.ucapan.value.trim();
+
+  if (!nama || !jumlah || !kehadiran) {
+    alert("Lengkapi semua field yang wajib diisi");
+    return;
+  }
+
+  // Kirim ke Google Sheets
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nama: nama,
+      jumlah: jumlah,
+      kehadiran: kehadiran,
+      ucapan: ucapan
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.status === "success") {
+      form.reset(); // reset form
+      status.classList.remove("d-none");
+      status.innerText = "Terima kasih, Terkirim 🙏";
+    } else {
+      alert("Gagal terkirim: " + res.message);
+    }
+  })
+  .catch(err => alert("Error: " + err));
+});
+</script>
+
     </div>
 
   </div>
