@@ -613,50 +613,38 @@ agar proses saling mengenal berjalan dalam batas kebaikan dan keberkahan.
         </p>
 
       </form>
-        <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbw5R4G0YdAy0H6TSDz00ZLUgUAyXmEMRH90GFqpIucp9ltQUMZ4N19drgsKnrWzT74omA/exec";
+       <script>
+  document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Ini yang penting: cegah reload halaman!
 
-const form = document.getElementById("rsvpForm");
-const status = document.getElementById("rsvpStatus");
+    // Ambil data form
+    const formData = new FormData(this);
 
-form.addEventListener("submit", function(e) {
-  e.preventDefault(); // 🔑 cegah reload page
+    // Ganti URL ini dengan endpoint backend lo (contoh: Formspree, Google Apps Script, dll)
+    const backendURL = 'https://formspree.io/f/your-form-id'; // contoh Formspree
 
-  const nama = form.nama.value.trim();
-  const jumlah = form.jumlah.value.trim();
-  const kehadiran = form.kehadiran.value;
-  const ucapan = form.ucapan.value.trim();
+    try {
+      const response = await fetch(backendURL, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
 
-  if (!nama || !jumlah || !kehadiran) {
-    alert("Lengkapi semua field yang wajib diisi");
-    return;
-  }
-
-  // Kirim ke Google Sheets
-  fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      nama: nama,
-      jumlah: jumlah,
-      kehadiran: kehadiran,
-      ucapan: ucapan
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.status === "success") {
-      form.reset(); // reset form
-      status.classList.remove("d-none");
-      status.innerText = "Terima kasih, Terkirim 🙏";
-    } else {
-      alert("Gagal terkirim: " + res.message);
+      if (response.ok) {
+        // Tampilkan pesan sukses
+        document.getElementById('rsvpStatus').classList.remove('d-none');
+        document.getElementById('rsvpStatus').textContent = 'Terima kasih, Terkirim 🙏';
+        this.reset(); // kosongin form
+      } else {
+        alert('Gagal kirim, coba lagi ya!');
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
     }
-  })
-  .catch(err => alert("Error: " + err));
-});
+  });
 </script>
-
     </div>
 
   </div>
